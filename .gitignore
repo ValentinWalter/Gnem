@@ -1,0 +1,10 @@
+# directories
+node_modules/
+dist/
+
+# files
+.env
+.vscode
+.DS_Store
+*.code-workspace
+config.json
