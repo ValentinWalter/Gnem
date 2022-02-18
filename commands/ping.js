@@ -5,6 +5,8 @@ module.exports = {
 		.setName("gnem")
 		.setDescription("einfach der gnem"),
 	async execute(interaction) {
-		await interaction.reply("GNEEEM")
+		let random = Math.floor(Math.random() * 16 + 1)
+		let eLetters = Array(random).fill(["E"]).flat().join("")
+		await interaction.reply(`GN${eLetters}M`)
 	},
 }
