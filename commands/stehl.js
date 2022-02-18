@@ -27,6 +27,7 @@ module.exports = {
 			item: item,
 		}
 
-		robSomeone((msg) => interaction.reply(msg), member, loot)
+		const embed = robSomeone(member, loot)
+		interaction.reply({ embeds: [embed] })
 	},
 }

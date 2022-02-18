@@ -36,10 +36,11 @@ async function robSomeoneRandom(client) {
 	const members = await guild.members.fetch()
 	const member = members.random()
 
-	robSomeone((msg) => channel.send(msg), member, randomLoot())
+	const embed = robSomeone(member, randomLoot())
+	channel.send({ embeds: [embed] })
 }
 
-function robSomeone(send, victim, loot) {
+function robSomeone(victim, loot) {
 	let stolenLoot = schatzkammer.get(victim.id) ?? { gulden: 0, items: [] }
 	stolenLoot.gulden += loot.gulden
 	stolenLoot.items.push(loot.item)
@@ -48,14 +49,15 @@ function robSomeone(send, victim, loot) {
 	const data = JSON.stringify(Array.from(schatzkammer))
 	fs.writeFileSync("./schatzkammer.json", data)
 
-	const embed = new MessageEmbed()
+	const plural = victim.displayName.endsWith("s")
+	const victimName = `${victim.displayName}${plural ? "" : "s"}`
+
+	return new MessageEmbed()
 		.setTitle(`gneeem stielt`)
 		.setColor("RED")
 		.setDescription(
-			`${victim.displayName}s \`${loot.item}\` und \`${loot.gulden} gulden\``
+			`${victimName} \`${loot.item}\` und \`${loot.gulden} gulden\``
 		)
-
-	send({ embeds: [embed] })
 }
 
 function randomLoot() {
