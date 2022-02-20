@@ -43,6 +43,17 @@ client.on("interactionCreate", async (interaction) => {
 
 // Login to Discord with your client's token
 client.login(token).then(async () => {
-	const twentyHours = 72000000
-	setInterval(async () => robSomeoneRandom(client), twentyHours)
+	const randomTime = () => {
+		const twentyHours = 72000000
+		const fortyHours = twentyHours * 2
+		return Math.floor(Math.random() * fortyHours + twentyHours)
+	}
+
+	const robAfter = (time) =>
+		setTimeout(async () => {
+			robSomeoneRandom(client)
+			robAfter(randomTime())
+		}, time)
+
+	robAfter(randomTime())
 })
