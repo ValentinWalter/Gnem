@@ -9,14 +9,17 @@ module.exports = {
 
 	async execute(interaction) {
 		const fields = await Promise.all(
-			schatzkammer.map(async (loot, id) => {
-				const user = await interaction.guild.members.fetch(id)
-				const items = loot.items.join(", ")
-				return {
-					name: user.displayName,
-					value: `${loot.gulden} gulden, ${items}`,
-				}
-			})
+			schatzkammer
+				.sort((a, b) => a.gulden - b.gulden)
+				.reverse()
+				.map(async (loot, id) => {
+					const user = await interaction.guild.members.fetch(id)
+					const items = loot.items.join("\n")
+					return {
+						name: user.displayName,
+						value: `${loot.gulden} gulden, ${items}`,
+					}
+				})
 		)
 
 		const embed = new MessageEmbed()
