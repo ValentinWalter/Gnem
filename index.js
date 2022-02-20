@@ -4,7 +4,7 @@ const { token } = require("./config.json")
 const { robSomeoneRandom } = require("./schatzkammer.js")
 
 // Create a new client instance
-const client = new Client({
+const gnem = new Client({
 	intents: [
 		Intents.FLAGS.GUILDS,
 		Intents.FLAGS.GUILD_PRESENCES,
@@ -20,10 +20,9 @@ const commandFiles = fs
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`)
 	commands.set(command.data.name, command)
-	console.log(`Mounted command ${file}`)
 }
 
-client.on("interactionCreate", async (interaction) => {
+gnem.on("interactionCreate", async (interaction) => {
 	if (!interaction.isCommand()) return
 
 	const command = commands.get(interaction.commandName)
@@ -42,7 +41,10 @@ client.on("interactionCreate", async (interaction) => {
 })
 
 // Login to Discord with your client's token
-client.login(token).then(async () => {
+gnem.login(token).then(async () => {
+	console.log(`Logged in as ${gnem.user.tag}!`)
+	gnem.user?.setActivity("mit dem Gedanken dich zu enteignen!")
+
 	const randomTime = () => {
 		const twentyHours = 72000000
 		const fortyHours = twentyHours * 2
@@ -51,9 +53,11 @@ client.login(token).then(async () => {
 
 	const robAfter = (time) =>
 		setTimeout(async () => {
-			robSomeoneRandom(client)
+			robSomeoneRandom(gnem)
 			robAfter(randomTime())
 		}, time)
 
 	robAfter(randomTime())
 })
+
+gnem.on("error", console.error)
