@@ -2,9 +2,10 @@
 	"name": "gnem",
 	"version": "1.0.0",
 	"description": "Der GNEM!",
-	"main": "index.js",
+	"main": "source/index.js",
 	"scripts": {
-		"start": "node ."
+		"start": "node .",
+		"test": "node test"
 	},
 	"author": "Valentin Walter",
 	"dependencies": {

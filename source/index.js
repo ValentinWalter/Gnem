@@ -1,6 +1,7 @@
 const fs = require("fs")
+const path = require("path")
 const { Client, Intents, Collection } = require("discord.js")
-const { token } = require("./config.json")
+const { token } = require("../config.json")
 const { robSomeoneRandom } = require("./schatzkammer.js")
 
 // Create a new client instance
@@ -12,9 +13,10 @@ const gnem = new Client({
 	],
 })
 
+// Mount commands
 const commands = new Collection()
 const commandFiles = fs
-	.readdirSync("./commands")
+	.readdirSync(path.join(__dirname, "commands"))
 	.filter((file) => file.endsWith(".js"))
 
 for (const file of commandFiles) {
@@ -22,6 +24,7 @@ for (const file of commandFiles) {
 	commands.set(command.data.name, command)
 }
 
+// Listen to interactions
 gnem.on("interactionCreate", async (interaction) => {
 	if (!interaction.isCommand()) return
 
@@ -40,8 +43,8 @@ gnem.on("interactionCreate", async (interaction) => {
 	}
 })
 
-// Login to Discord with your client's token
-gnem.login(token).then(async () => {
+// Handle login
+async function onLogin() {
 	console.log(`Logged in as ${gnem.user.tag}!`)
 	gnem.user?.setActivity("mit dem Gedanken dich zu enteignen!")
 
@@ -58,6 +61,12 @@ gnem.login(token).then(async () => {
 		}, time)
 
 	robAfter(randomTime())
-})
+}
 
-gnem.on("error", console.error)
+const shouldLogin = !process.env.npm_config_nologin
+if (shouldLogin) {
+	gnem.login(token).then(onLogin)
+	gnem.on("error", console.error)
+} else {
+	console.log("Built successfully — did not log in.")
+}

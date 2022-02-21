@@ -1,6 +1,7 @@
 const fs = require("fs")
+const path = require("path")
 const { Collection, MessageEmbed } = require("discord.js")
-const { guild_id, channel_id } = require("./config.json")
+const { guild_id, channel_id } = require("../config.json")
 
 const items = [
 	"augenbrauen",
@@ -27,7 +28,7 @@ const items = [
 	"zwicker",
 ]
 
-const raw = fs.readFileSync("./schatzkammer.json")
+const raw = fs.readFileSync(path.resolve(__dirname, "../data/schatzkammer.json"))
 let schatzkammer = raw ? new Collection(JSON.parse(raw)) : new Collection()
 
 async function robSomeoneRandom(client) {
