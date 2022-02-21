@@ -1,19 +1,20 @@
-const fs = require("fs")
-const path = require("path")
-const { Collection, MessageEmbed } = require("discord.js")
-const { guild_id, channel_id } = require("../config.json")
+import { readFileSync, writeFileSync } from "fs"
+import { resolve } from "path"
+import { Collection, MessageEmbed } from "discord.js"
+import config from "../config.json" assert { type: "json" }
+import { _dirname } from "./dirname.js"
 
-const itemsPath = path.resolve(__dirname, "../data/items.json")
-const rawItems = fs.readFileSync(itemsPath)
+const itemsPath = resolve(_dirname, "../data/items.json")
+const rawItems = readFileSync(itemsPath)
 const items = JSON.parse(rawItems)
 
-const schatzkammerPath = path.resolve(__dirname, "../data/schatzkammer.json")
-const rawSchatzkammer = fs.readFileSync(schatzkammerPath)
-let schatzkammer = new Collection(JSON.parse(rawSchatzkammer))
+const schatzkammerPath = resolve(_dirname, "../data/schatzkammer.json")
+const rawSchatzkammer = readFileSync(schatzkammerPath)
+export let schatzkammer = new Collection(JSON.parse(rawSchatzkammer))
 
-async function robSomeoneRandom(client) {
-	const channel = await client.channels.fetch(channel_id)
-	const guild = client.guilds.cache.get(guild_id)
+export async function robSomeoneRandom(client) {
+	const channel = await client.channels.fetch(config.channel_id)
+	const guild = client.guilds.cache.get(config.guild_id)
 	const members = await guild.members.fetch()
 	const member = members.random()
 
@@ -21,14 +22,14 @@ async function robSomeoneRandom(client) {
 	channel.send({ embeds: [embed] })
 }
 
-function robSomeone(victim, loot) {
+export function robSomeone(victim, loot) {
 	let stolenLoot = schatzkammer.get(victim.id) ?? { gulden: 0, items: [] }
 	stolenLoot.gulden += loot.gulden
 	stolenLoot.items.push(loot.item)
 	schatzkammer.set(victim.id, stolenLoot)
 
 	const data = JSON.stringify(Array.from(schatzkammer))
-	fs.writeFileSync(schatzkammerPath, data)
+	writeFileSync(schatzkammerPath, data)
 
 	const plural = victim.displayName.endsWith("s")
 	const victimName = `${victim.displayName}${plural ? "" : "s"}`
@@ -41,10 +42,8 @@ function robSomeone(victim, loot) {
 		)
 }
 
-function randomLoot() {
+export function randomLoot() {
 	const gulden = Math.floor(Math.random() * 100 + 1)
 	const item = items[Math.floor(Math.random() * items.length)]
 	return { gulden: gulden, item: item }
 }
-
-module.exports = { robSomeone, robSomeoneRandom, randomLoot, schatzkammer }

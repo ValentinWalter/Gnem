@@ -3,9 +3,11 @@
 	"version": "1.0.0",
 	"description": "Der GNEM!",
 	"main": "source/index.js",
+	"type": "module",
 	"scripts": {
-		"start": "node .",
-		"test": "node test"
+		"start": "node --experimental-json-modules .",
+		"test": "node test",
+		"deploy-commands": "node --experimental-json-modules deploy-commands"
 	},
 	"author": "Valentin Walter",
 	"dependencies": {

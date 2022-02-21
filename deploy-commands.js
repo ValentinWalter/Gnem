@@ -1,7 +1,7 @@
-const { readdirSync } = require("fs")
-const { REST } = require("@discordjs/rest")
-const { Routes } = require("discord-api-types/v9")
-const { client_id, guild_id, token } = require("./config.json")
+import { readdirSync } from "fs"
+import { REST } from "@discordjs/rest"
+import { Routes } from "discord-api-types/v9"
+import config from "./config.json" assert { type: "json" }
 
 const commands = []
 const commandFiles = readdirSync("./source/commands").filter((file) =>
@@ -9,13 +9,15 @@ const commandFiles = readdirSync("./source/commands").filter((file) =>
 )
 
 for (const file of commandFiles) {
-	const command = require(`./source/commands/${file}`)
+	const command = await import(`./source/commands/${file}`)
 	commands.push(command.data.toJSON())
 	console.log(`Pushed ${file}`)
 }
 
-const rest = new REST({ version: "9" }).setToken(token)
+const rest = new REST({ version: "9" }).setToken(config.token)
 
-rest.put(Routes.applicationGuildCommands(client_id, guild_id), { body: commands })
+rest.put(Routes.applicationGuildCommands(config.client_id, config.guild_id), {
+	body: commands,
+})
 	.then(() => console.log("Successfully registered application commands."))
 	.catch(console.error)

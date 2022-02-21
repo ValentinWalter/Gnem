@@ -1,8 +1,9 @@
-const fs = require("fs")
-const path = require("path")
-const { Client, Intents, Collection } = require("discord.js")
-const { token } = require("../config.json")
-const { robSomeoneRandom } = require("./schatzkammer.js")
+import { readdirSync } from "fs"
+import { join } from "path"
+import { Client, Intents, Collection } from "discord.js"
+import config from "../config.json" assert { type: "json" }
+import { robSomeoneRandom } from "./schatzkammer.js"
+import { _dirname } from "./dirname.js"
 
 // Create a new client instance
 const gnem = new Client({
@@ -15,12 +16,12 @@ const gnem = new Client({
 
 // Mount commands
 const commands = new Collection()
-const commandFiles = fs
-	.readdirSync(path.join(__dirname, "commands"))
-	.filter((file) => file.endsWith(".js"))
+const commandFiles = readdirSync(join(_dirname, "commands")).filter((file) =>
+	file.endsWith(".js")
+)
 
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`)
+	const command = await import(`./commands/${file}`)
 	commands.set(command.data.name, command)
 }
 
@@ -44,8 +45,7 @@ gnem.on("interactionCreate", async (interaction) => {
 })
 
 // Handle login
-async function onLogin() {
-	console.log(`Logged in as ${gnem.user.tag}!`)
+async function onReady() {
 	gnem.user?.setActivity("mit dem Gedanken dich zu enteignen!")
 
 	const randomTime = () => {
@@ -63,19 +63,24 @@ async function onLogin() {
 	robAfter(randomTime())
 }
 
-const shouldLogin = !process.env.npm_config_nologin
-const shouldRobSomeone = !process.env.npm_config_robsomeone
+const shouldLogin = process.env.npm_config_login
+const shouldRobSomeone = process.env.npm_config_robsomeone
 
 if (shouldLogin) {
-	gnem.on("error", console.error)
+	try {
+		gnem.on("error", console.error)
+		gnem.once("ready", onReady)
 
-	gnem.login(token).then(() => {
-		onLogin()
+		await gnem.login(config.token)
+		console.log(`Logged in as ${gnem.user.tag}!`)
 
 		if (shouldRobSomeone) {
-			robSomeoneRandom(gnem)
+			await robSomeoneRandom(gnem)
+			console.log("Robbed someone.")
 		}
-	})
+	} catch (error) {
+		console.error(`Error while logging in: ${error}`)
+	}
 } else {
 	console.log("Built successfully — did not log in.")
 }
