@@ -17,6 +17,7 @@ module.exports = {
 				.setDescription("das zu stehlende eigentum")
 				.setRequired(true)
 		),
+
 	async execute(interaction) {
 		const user = interaction.options.getUser("opfer")
 		const item = interaction.options.getString("item")

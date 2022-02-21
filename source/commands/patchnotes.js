@@ -7,6 +7,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("patch-notes")
 		.setDescription("einfach die patch notes"),
+
 	async execute(interaction) {
 		const path = Path.resolve(__dirname, "../../data/patch-notes.json")
 		const rawPatchnotes = fs.readFileSync(path)

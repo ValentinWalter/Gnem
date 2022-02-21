@@ -3,11 +3,13 @@ const path = require("path")
 const { Collection, MessageEmbed } = require("discord.js")
 const { guild_id, channel_id } = require("../config.json")
 
-const rawItems = fs.readFileSync(path.resolve(__dirname, "../data/items.json"))
+const itemsPath = path.resolve(__dirname, "../data/items.json")
+const rawItems = fs.readFileSync(itemsPath)
 const items = JSON.parse(rawItems)
 
-const raw = fs.readFileSync(path.resolve(__dirname, "../data/schatzkammer.json"))
-let schatzkammer = raw ? new Collection(JSON.parse(raw)) : new Collection()
+const schatzkammerPath = path.resolve(__dirname, "../data/schatzkammer.json")
+const rawSchatzkammer = fs.readFileSync(schatzkammerPath)
+let schatzkammer = new Collection(JSON.parse(rawSchatzkammer))
 
 async function robSomeoneRandom(client) {
 	const channel = await client.channels.fetch(channel_id)
@@ -26,7 +28,7 @@ function robSomeone(victim, loot) {
 	schatzkammer.set(victim.id, stolenLoot)
 
 	const data = JSON.stringify(Array.from(schatzkammer))
-	fs.writeFileSync("./schatzkammer.json", data)
+	fs.writeFileSync(schatzkammerPath, data)
 
 	const plural = victim.displayName.endsWith("s")
 	const victimName = `${victim.displayName}${plural ? "" : "s"}`

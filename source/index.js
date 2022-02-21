@@ -64,9 +64,18 @@ async function onLogin() {
 }
 
 const shouldLogin = !process.env.npm_config_nologin
+const shouldRobSomeone = !process.env.npm_config_robsomeone
+
 if (shouldLogin) {
-	gnem.login(token).then(onLogin)
 	gnem.on("error", console.error)
+
+	gnem.login(token).then(() => {
+		onLogin()
+
+		if (shouldRobSomeone) {
+			robSomeoneRandom(gnem)
+		}
+	})
 } else {
 	console.log("Built successfully — did not log in.")
 }
