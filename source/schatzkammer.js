@@ -3,30 +3,8 @@ const path = require("path")
 const { Collection, MessageEmbed } = require("discord.js")
 const { guild_id, channel_id } = require("../config.json")
 
-const items = [
-	"augenbrauen",
-	"besen",
-	"brille",
-	"ehre",
-	"gaming maus",
-	"guldenbeutel",
-	"handy",
-	"hose",
-	"hut",
-	"kugelschreiber",
-	"lupe",
-	"lustige taschenbücher",
-	"megafon",
-	"monitor",
-	"pantoffeln",
-	"pausenessen",
-	"rucksack",
-	"sammlung antiker ägyptischen bücher zur praxis der mummifizierung",
-	"tastatur",
-	"tischlampe",
-	"toaster",
-	"zwicker",
-]
+const rawItems = fs.readFileSync(path.resolve(__dirname, "../data/items.json"))
+const items = JSON.parse(rawItems)
 
 const raw = fs.readFileSync(path.resolve(__dirname, "../data/schatzkammer.json"))
 let schatzkammer = raw ? new Collection(JSON.parse(raw)) : new Collection()
