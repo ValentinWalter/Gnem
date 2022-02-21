@@ -4,10 +4,12 @@ const { Routes } = require("discord-api-types/v9")
 const { client_id, guild_id, token } = require("./config.json")
 
 const commands = []
-const commandFiles = readdirSync("./commands").filter((file) => file.endsWith(".js"))
+const commandFiles = readdirSync("./source/commands").filter((file) =>
+	file.endsWith(".js")
+)
 
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`)
+	const command = require(`./source/commands/${file}`)
 	commands.push(command.data.toJSON())
 	console.log(`Pushed ${file}`)
 }

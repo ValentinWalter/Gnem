@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders")
-const { MessageEmbed, Message } = require("discord.js")
+const { MessageEmbed } = require("discord.js")
 const { schatzkammer } = require("../schatzkammer")
 
 module.exports = {
