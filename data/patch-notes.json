@@ -3,5 +3,6 @@
 	"1.0.1": [
 		"`/schatzkammer`: jetzt sortiert nach gulden",
 		"`/gnem`: zahl der *E*s jetzt zufällig"
-	]
+	],
+	"1.0.2": ["Bug fixes"]
 }
