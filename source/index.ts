@@ -1,25 +1,19 @@
 import { readdirSync } from "fs"
 import { join } from "path"
-import { Client, Intents, Collection, Interaction } from "discord.js"
-import config from "../config.json" assert { type: "json" }
-import { robSomeoneRandom } from "./schatzkammer.js"
-import { _dirname } from "./dirname.js"
+import { Collection, Interaction } from "discord.js"
+import config from "config.json" assert { type: "json" }
+import { model } from "@source/globals"
+import { _dirname } from "@source/dirname"
 import { SlashCommandBuilder } from "@discordjs/builders"
 
-// Create a new client instance
-const gnem = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_PRESENCES,
-    Intents.FLAGS.GUILD_MEMBERS,
-  ],
-})
+// Exported by modules in "@source/commands/*"
+type Command = {
+  data: SlashCommandBuilder
+  execute: (interaction: Interaction) => Promise<void>
+}
 
 // Mount commands
-const commands = new Collection<
-  String,
-  { data: SlashCommandBuilder; execute: (interaction: Interaction) => Promise<void> }
->()
+const commands = new Collection<String, Command>()
 const commandFiles = readdirSync(join(_dirname, "commands")).filter((file) =>
   file.endsWith(".js")
 )
@@ -30,7 +24,7 @@ for (const file of commandFiles) {
 }
 
 // Listen to interactions
-gnem.on("interactionCreate", async (interaction) => {
+model.client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return
 
   const command = commands.get(interaction.commandName)
@@ -50,36 +44,38 @@ gnem.on("interactionCreate", async (interaction) => {
 
 // Handle login
 async function onReady() {
-  gnem.user?.setActivity("mit dem Gedanken dich zu enteignen!")
+  model.client.user?.setActivity("mit dem Gedanken dich zu enteignen!") // Status: "Spielt mit..."
 
-  const randomTime = () => {
+  const randomTimeInterval = () => {
     const twentyHours = 72000000
     const fortyHours = twentyHours * 2
     return Math.floor(Math.random() * fortyHours + twentyHours)
   }
 
+  // Periodically rob someone random
   const robAfter = (time: number) =>
     setTimeout(async () => {
-      robSomeoneRandom(gnem)
-      robAfter(randomTime())
+      model.robSomeoneRandom()
+      robAfter(randomTimeInterval())
     }, time)
 
-  robAfter(randomTime())
+  robAfter(randomTimeInterval())
 }
 
+// Perform startup logic
 const shouldLogin = process.env.npm_config_login
 const shouldRobSomeone = process.env.npm_config_robsomeone
 
 if (shouldLogin) {
   try {
-    gnem.on("error", console.error)
-    gnem.once("ready", onReady)
+    model.client.on("error", console.error)
+    model.client.once("ready", onReady)
 
-    await gnem.login(config.token)
-    console.log(`Logged in as ${gnem.user?.tag}!`)
+    await model.client.login(config.token)
+    console.log(`Logged in as ${model.client.user?.tag}!`)
 
     if (shouldRobSomeone) {
-      await robSomeoneRandom(gnem)
+      await model.robSomeoneRandom()
       console.log("Robbed someone.")
     }
   } catch (error) {

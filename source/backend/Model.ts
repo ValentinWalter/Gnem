@@ -7,9 +7,11 @@ import { resolve } from "path"
 
 export default class Model {
   readonly itemPool: string[]
+  readonly client: Client
   private backend: Backend
 
-  constructor() {
+  constructor(client: Client) {
+    this.client = client
     this.backend = new Backend()
 
     const itemsPath = resolve(_dirname, "../data/items.json")
@@ -23,10 +25,10 @@ export default class Model {
     return { gulden: gulden, item: item }
   }
 
-  async robSomeoneRandom(client: Client) {
+  async robSomeoneRandom() {
     // TODO: Provide guilds the option to customize this channel
-    const channel = (await client.channels.fetch(config.channel_id)) as TextChannel
-    const guild = client.guilds.cache.get(config.guild_id)
+    const channel = (await this.client.channels.fetch(config.channel_id)) as TextChannel
+    const guild = this.client.guilds.cache.get(config.guild_id)
     const members = await guild?.members.fetch()
     const member = members?.random()
 
