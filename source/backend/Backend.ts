@@ -15,7 +15,7 @@ export default class Backend {
     // mutate database
   }
 
-  treasuryForGuild(guild: Guild): Collection<string, Loot[]> {
+  treasuryForGuild(guild: Guild): Collection<string, Loot> {
     // read database
     return new Collection()
   }
