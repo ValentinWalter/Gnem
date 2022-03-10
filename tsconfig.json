@@ -13,7 +13,12 @@
     "isolatedModules": true,
     "incremental": true,
     "outDir": "build",
-    "sourceMap": true
+    "sourceMap": true,
+	"baseUrl": ".",
+	"paths": {
+      "@source/*": ["source/*"],
+      "@backend/*": ["source/backend/*"],
+	}
   },
   "include": ["source/**/*.ts", "source/**/*.js", "data/**/*.json"],
   "exclude": ["node_modules"]
