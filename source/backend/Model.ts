@@ -1,9 +1,22 @@
-import Backend, { LootItem } from "@backend/Backend"
+import Backend, { Loot, LootItem } from "@backend/Backend"
 import { _dirname } from "@source/dirname.js"
 import config from "config.json" assert { type: "json" }
-import { Client, GuildMember, MessageEmbed, TextChannel } from "discord.js"
+import {
+  Client,
+  Collection,
+  Guild,
+  GuildMember,
+  MessageEmbed,
+  TextChannel,
+} from "discord.js"
 import { readFileSync } from "fs"
 import { resolve } from "path"
+
+function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+  if (value === null || value === undefined) return false
+  const testDummy: TValue = value
+  return true
+}
 
 export default class Model {
   readonly itemPool: string[]
@@ -19,6 +32,21 @@ export default class Model {
     this.itemPool = JSON.parse(rawItems)
   }
 
+  async treasuryForGuild(guild: Guild): Promise<Collection<GuildMember, Loot>> {
+    const byMember = this.backend
+      .treasuryForGuild(guild)
+      .map(async (loot, id): Promise<[GuildMember, Loot] | null> => {
+        try {
+          const user = await guild.members.fetch(id)
+          return [user, loot]
+        } catch {
+          return null
+        }
+      })
+
+    return new Collection((await Promise.all(byMember)).filter(notEmpty))
+  }
+
   randomLoot(): LootItem {
     const gulden = Math.floor(Math.random() * 100 + 1)
     const item = this.itemPool[Math.floor(Math.random() * this.itemPool.length)]
@@ -27,7 +55,9 @@ export default class Model {
 
   async robSomeoneRandom() {
     // TODO: Provide guilds the option to customize this channel
-    const channel = (await this.client.channels.fetch(config.channel_id)) as TextChannel
+    const channel = (await this.client.channels.fetch(
+      config.channel_id
+    )) as TextChannel
     const guild = this.client.guilds.cache.get(config.guild_id)
     const members = await guild?.members.fetch()
     const member = members?.random()
