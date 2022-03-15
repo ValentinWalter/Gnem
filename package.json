@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "tsc & node --experimental-json-modules .",
-    "test": "node test",
+    "test": "tsc test.ts & node test.js",
     "deploy-commands": "node --experimental-json-modules deploy-commands"
   },
   "author": "Valentin Walter",
