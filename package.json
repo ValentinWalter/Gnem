@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Der GNEM!",
   "main": "build/source/index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "tsc & node --experimental-json-modules .",
     "test": "tsc test.ts & node test.js",

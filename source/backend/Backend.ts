@@ -19,16 +19,18 @@ var bag:string[]
 
 
 export default class Backend {
-  rob(user: GuildMember, loot: LootItem) {
+  rob(member: String, loot: LootItem) {
     // mutate database
-    db.run("insert into schatzkammer (Item, Gulden, Opfer) Values  (?,?,?)", (loot.item, loot.gulden, user))
+    db.run("insert into schatzkammer (Item, Gulden, Opfer) Values  (?,?,?)", (loot.item, loot.gulden, member))
   }
 
-  treasuryForGuild(guild: Guild): Collection<string, Loot> {
+  treasuryForGuild(/*guild: Guild*/): Collection<String, Loot> {
     // read database
-    var rueckgabe = new Collection<string, Loot>()
-    db.each("select opfer, Sum(gulden) as guld, count(*) as anzahl from schatzkammer group by opfer", function(err: any, row: { opfer: string; guld: number; anzahl: any }){
-
+    var rueckgabe = new Collection<String, Loot>()
+    db.each("select opfer, Sum(gulden) as guld, count(*) as anzahl from schatzkammer group by opfer", function(err: any, row: { opfer: String; guld: number; anzahl: any }){
+      //var member:string
+      //member = row.opfer
+      //if(row.opfer.guild == guild){
       while(bag.length != 0){
         bag.pop
       }
@@ -41,8 +43,9 @@ export default class Backend {
      haltItem.gulden = row.guld
      haltItem.items = bag
      rueckgabe.set(row.opfer, haltItem)
+    //}
     })
-  
+    
     return rueckgabe
   }
 }
