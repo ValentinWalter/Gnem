@@ -14,12 +14,17 @@
     "incremental": true,
     "outDir": "build",
     "sourceMap": true,
-	"baseUrl": ".",
-	"paths": {
+    "baseUrl": ".",
+    "paths": {
       "@source/*": ["source/*"],
-      "@backend/*": ["source/backend/*"],
-	}
+      "@backend/*": ["source/backend/*"]
+    }
   },
-  "include": ["source/**/*.ts", "source/**/*.js", "data/**/*.json"],
+  "include": [
+    "source/**/*.ts",
+    "source/**/*.js",
+    "data/**/*.json",
+    "resources/**/*.mp3"
+  ],
   "exclude": ["node_modules"]
 }

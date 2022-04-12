@@ -12,6 +12,7 @@ const gnem = new Client({
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_PRESENCES,
     Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_VOICE_STATES,
   ],
 })
 
