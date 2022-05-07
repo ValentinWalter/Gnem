@@ -1,4 +1,5 @@
 import { Collection, Guild, GuildMember } from "discord.js"
+import { PrismaClient } from "@prisma/client"
 
 export type Loot = {
   gulden: number
@@ -11,6 +12,8 @@ export type LootItem = {
 }
 
 export default class Backend {
+  prisma = new PrismaClient()
+
   rob(user: GuildMember, loot: LootItem) {
     // mutate database
   }
